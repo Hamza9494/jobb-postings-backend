@@ -1,0 +1,32 @@
+
+$login_data = json_decode(file_get_contents("php://input"), true);
+
+echo json_encode($login_data);
+
+$mysqli = require __DIR__ . "/database.php";
+
+$sql = "SELECT * FROM users WHERE email = ? ";
+
+$stmt = $mysqli->prepare($sql);
+
+$stmt->bind_param("s", $login_data["email"]);
+
+$stmt->execute();
+
+$result = $stmt->get_result();
+
+$user = $result->fetch_assoc();
+
+if ($user) {
+   if (password_verify($login_data["password"], $user["password_hash"]) && $user["account_activation_hash"] ==  '') {
+      $key = "mykey2010";
+      $payload = ["email" => $user["email"]];
+      $jwt = JWT::encode($payload, $key, 'HS256');
+
+      echo json_encode(["token" => $jwt]);
+   } else if (!password_verify($login_data["password"], $user["password_hash"])) {
+      echo  json_encode(["user_exist" => false, "information" => "invalid password"]);
+   }
+} else if (!$user) {
+   echo json_encode(["user_exist" => false]);
+}
