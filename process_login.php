@@ -5,6 +5,7 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 header('Content-Type: application/json; charset=utf-8');
 
 
+
 use Firebase\JWT\JWT;
 
 require "./vendor/autoload.php";
