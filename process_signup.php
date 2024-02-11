@@ -1,4 +1,7 @@
 <?php
+
+use function PHPSTORM_META\type;
+
 error_reporting(E_ERROR | E_PARSE);
 
 
@@ -40,19 +43,24 @@ if ($signup_data["password"] !== $signup_data["password_confirm"]) {
    die();
 }
 
+if (empty($signup_data["type"])) {
+   echo  json_encode(["user_type_error" => "type must be selected"]);
+   die();
+}
+
 $password_hash = password_hash($signup_data["password"], PASSWORD_DEFAULT);
 
 $activation_token = bin2hex(random_bytes(16));
 
 $activation_token_hash = hash("SHA256", $activation_token);
 
-$sql = "INSERT INTO users (name , email , password_hash , account_activation_hash) VALUE ( ? , ? , ? , ?) ";
+$sql = "INSERT INTO users (name , email , password_hash , account_activation_hash , type) VALUE ( ? , ? , ? , ? , ?) ";
 
 $mysqli = require __DIR__  . "/database.php";
 
 $stmt = $mysqli->prepare($sql);
 
-$stmt->bind_param("ssss", $signup_data["name"], $signup_data["email"], $password_hash, $activation_token_hash);
+$stmt->bind_param("sssss", $signup_data["name"], $signup_data["email"], $password_hash, $activation_token_hash, $signup_data["type"]);
 
 if ($stmt->execute()) {
    $mail = require __DIR__ . "/mailer.php";
