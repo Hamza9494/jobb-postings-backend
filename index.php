@@ -10,6 +10,7 @@ require "./vendor/autoload.php";
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
+$test = 'test git';
 $headers = getallheaders();
 
 $bearer_auth = explode("Bearer ", $headers["Authorization"]);

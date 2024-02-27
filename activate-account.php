@@ -13,7 +13,6 @@ $token = ($credentials[0]);
 
 $token_hash = hash("SHA256", $token);
 
-var_dump($token_hash);
 
 $mysqli = require __DIR__ . "/database.php";
 
